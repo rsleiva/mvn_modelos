@@ -18,7 +18,7 @@ class App {
             @Override
             public void run() {
                 // Ejecutar la tarea
-				ModeloX m1 = new ModeloX(1,p);
+				ModeloX m1 = new ModeloX(2,p);
 				m1.obtieneDocumentosNuevos();
                 getSchedule();
             }

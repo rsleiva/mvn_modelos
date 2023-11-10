@@ -103,14 +103,14 @@ public class Conectar {
 		try {
 			Statement sentencia = con.createStatement();
 			rs = sentencia.executeQuery(String.format(sql,id));
-			System.out.println(""
-				+ "\tDOCUMENT_ID"
-				+ "\tFECHA_DOCUMENTO"
-				+ "\tORIGEN"
-				+ "\t\tOBJECTID"
-				+ "\tCT (NEXTID)"
-				+ "\t\tCANT_AFECTACIONES"
-			);
+			// System.out.println(""
+			// 	+ "\tDOCUMENT_ID"
+			// 	+ "\tFECHA_DOCUMENTO"
+			// 	+ "\tORIGEN"
+			// 	+ "\t\tOBJECTID"
+			// 	+ "\tCT (NEXTID)"
+			// 	+ "\t\tCANT_AFECTACIONES"
+			// );
 			while (rs.next()) {
 				AfectacionesDTO  datos= new AfectacionesDTO();
 				datos.setId(rs.getInt("ID"));
@@ -128,16 +128,16 @@ public class Conectar {
 				datos.setFin(
 					getRestauracion(datos.getId(), datos.getObjectid())
 				);
-				// datos.setFin(rs.getDate("FECHA_RESTAURACION"));
+				datos.setOp_logidto(rs.getInt("LOGIDTO"));
 
-				System.out.println(
-					"\t"+datos.getId()
-					+"\t"+datos.getFecha_documento()
-					+"\t"+datos.getOrigen()
-					+"\t"+datos.getObjectid()
-					+"\t"+datos.getCt()
-					+"\t"+datos.getCant_afectaciones()
-				);
+				// System.out.println(
+				// 	"\t"+datos.getId()
+				// 	+"\t"+datos.getFecha_documento()
+				// 	+"\t"+datos.getOrigen()
+				// 	+"\t"+datos.getObjectid()
+				// 	+"\t"+datos.getCt()
+				// 	+"\t"+datos.getCant_afectaciones()
+				// );
 				
 				lista.add(datos);
 			}
@@ -216,10 +216,92 @@ public class Conectar {
 					nextid= rs.getInt("NEXTID");
 				}
 			} while (nextid>0 && objectid!=nextid);
-
+			rs.close();
 			return objectid;
 		} catch (Exception e) {
 			return objectid;
+		}
+	}
+
+	public Integer getOtroDocActivo(int objectid){
+		ResultSet rs=null;
+		// String doc="";
+		Integer cant=0;
+		/*
+		 * Busco Documento y Cantidad de CT activos en WS
+		 */
+		try {
+			Statement sentencia = con.createStatement();
+			rs = sentencia.executeQuery
+				(String.format(SQL.SQL_DUPLICA_CT,objectid));
+			while (rs.next()) {
+				// doc=rs.getString("NRO_DOCUMENTO");
+				cant= rs.getInt("CANTIDAD");
+			}
+			rs.close();	
+			return cant;
+		} catch (Exception e) {
+			return 0;
+		}
+	}
+
+	public Integer getOtraOperacion(String nro_documento, int objectid){
+		ResultSet rs=null;
+		Integer cant=0;
+		/*
+		 * Busco si para el mismo documento tiene el ct diferentes operaciones
+		 */
+		try {
+			Statement sentencia = con.createStatement();
+			rs = sentencia.executeQuery
+				(String.format(SQL.SQL_DUPLICA_OP,nro_documento,objectid));
+			while (rs.next()) {
+				cant= rs.getInt("CANTIDAD");
+			}
+			rs.close();	
+			return cant;
+		} catch (Exception e) {
+			return 0;
+		}
+	}
+
+	public Integer getConfirmado(int iddoc){
+		ResultSet rs=null;
+		Integer confirma=0;
+		/*
+		 * Busco si para el iddoc es un documento confirmado en idms
+		 */
+		try {
+			Statement sentencia = con.createStatement();
+			rs = sentencia.executeQuery
+				(String.format(SQL.SQL_CONFIRMADO,iddoc));
+			while (rs.next()) {
+				confirma= rs.getInt("CONFIRMADO");
+			}
+			rs.close();	
+			return confirma;
+		} catch (Exception e) {
+			return 0;
+		}
+	}
+
+	public String getDelta(String ct){
+		ResultSet rs=null;
+		String delta="";
+		/*
+		 * Busco el area para saber si es del delta
+		 */
+		try {
+			Statement sentencia = con.createStatement();
+			rs = sentencia.executeQuery
+				(String.format(SQL.SQL_DELTA,ct));
+			while (rs.next()) {
+				delta= rs.getString("DELTA");
+			}
+			rs.close();	
+			return delta;
+		} catch (Exception e) {
+			return null;
 		}
 	}
 

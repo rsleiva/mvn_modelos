@@ -15,6 +15,7 @@ public class AfectacionesDTO {
     private Date fin;
     private int is_restored;
     private int is_affected;
+    private int op_logidto;
 
     public int getId() {
         return id;
@@ -81,6 +82,12 @@ public class AfectacionesDTO {
     }
     public void setIs_affected(int is_affected) {
         this.is_affected = is_affected;
+    }
+    public int getOp_logidto() {
+        return op_logidto;
+    }
+    public void setOp_logidto(int op_logidto) {
+        this.op_logidto = op_logidto;
     }
 
 

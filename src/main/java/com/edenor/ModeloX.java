@@ -62,11 +62,11 @@ public class ModeloX implements IModelo {
                 for (DocumentosDTO d : doc) {
                     if (!existeDoc(d.getName())) {
             
-                        System.out.println(
-                            "--------------------------------------------------------------------------------------------------------------------------"
-                            + "\n\tREPORTE DEL DOCUMENTO: " + d.getName()
-                            + "\n\t-------------------------------------"
-                           );
+                        // System.out.println(
+                        //     "--------------------------------------------------------------------------------------------------------------------------"
+                        //     + "\n\tDOCUMENTO: " + d.getName()
+                        //     // + "\n\t-------------------------------------"
+                        //    );
                         /*
                         * Se obtiene datos del Modelo, segun corresponda
                         */
@@ -74,6 +74,9 @@ public class ModeloX implements IModelo {
                             switch (nroModelo) {
                                 case 1:
                                     afe= cnn.getAfectaciones(SQL.SQL_MODELO,d.getId());
+                                    break;
+                                case 2:
+                                    afe= cnn.getAfectaciones(SQL.SQL_MODELO_2,d.getId());
                                     break;
                                 default:
                                     break;
@@ -91,14 +94,6 @@ public class ModeloX implements IModelo {
                         * Muestro datos y exporto a notepad
                         */
                         for (AfectacionesDTO a : afe) {
-                            // System.out.println(""
-                            //     +"\t"+a.getId()
-                            //     +"\t"+getDate(a.getFecha_documento(), "dd-MM-yyyy HH:mm:ss")
-                            //     +"\t"+a.getObjectid()
-                            //     +"\t"+a.getCt()
-                            //     +"\t"+a.getCant_afectaciones()
-                            //     +"\t\t\t"+a.getOrigen()
-                            // );
                             notepad.add(
                                 fecha
                                 +";"+a.getOrigen()
@@ -113,6 +108,13 @@ public class ModeloX implements IModelo {
                                 +";"+a.getCant_afectaciones()
                                 +";"+a.getIs_affected()
                                 +";"+a.getIs_restored()
+                                +";"+analizaCT(
+                                    d.getId(),
+                                    d.getName(),
+                                    a.getObjectid(),
+                                    a.getCt().replace(" ",";"),
+                                    a.getCant_afectaciones()
+                                )
                             );
                         }
                     }
@@ -127,6 +129,45 @@ public class ModeloX implements IModelo {
             System.out.println("No se pudo establecer conexion con Oracle");
         } 
     }
+
+    private String analizaCT(int iddoc, String nro_documento, int objectid, String ct, int afectaciones) {
+        // Obtengo las veces que el objectid se encuentra afectado, si aparece mas de una vez no cargo este CT
+        ct= extraerNumero(ct);
+        //
+        Integer otroDocActivo= cnn.getOtroDocActivo(objectid);
+        Integer otraOperacion= cnn.getOtraOperacion(nro_documento, objectid);
+        Integer confirmado= cnn.getConfirmado(iddoc);
+        String delta= cnn.getDelta(ct);
+
+        if (ct.length()<4){
+            return "CT Corto.";
+        } else if (ct.equals(null) || ct.isEmpty()) {
+            return "CT Nulo.";
+        } else if (otroDocActivo>0) {
+            return "CT en otro Doc.";
+        } else if (otraOperacion>0){
+            return "CT en otra Operacion.";
+        } else if (afectaciones==0){
+            return "CT sin afectacion";
+        } else if (!(confirmado==1 || delta.equals("DELTA"))) {
+            return "CT no confirmado o no es del delta";
+        } else {
+            return "Ok";
+        }
+    }
+
+    private String extraerNumero(String cadena) {
+        // Usando expresiones regulares para extraer el número
+        String patron = "\\d+";
+        java.util.regex.Pattern p = java.util.regex.Pattern.compile(patron);
+        java.util.regex.Matcher m = p.matcher(cadena);
+
+        if (m.find()) {
+            return m.group(); // Devuelve el primer número encontrado en la cadena
+        }
+
+        return null; // Devuelve null si no se encuentra ningún número
+    }    
 
     @Override
     public void exportaTXT(List<String> notepad) {
