@@ -1,0 +1,63 @@
+package com.constantes;
+
+public class SQL {
+    
+    // public static final String NUEVOS_DOCUMENTOS="SELECT ID, NAME, CREATION_TIME, TYPE_ID FROM NEXUS_GIS.OMS_DOCUMENT WHERE TYPE_ID IN (3,4,5,6) AND LAST_STATE_ID<5 AND CREATION_TIME > SYSDATE - INTERVAL '15' MINUTE ORDER BY ID DESC";
+    public static final String NUEVOS_DOCUMENTOS="SELECT ID, NAME, CREATION_TIME, TYPE_ID FROM NEXUS_GIS.OMS_DOCUMENT WHERE TYPE_ID IN (3,4,5,6) AND LAST_STATE_ID<5 ORDER BY ID DESC";
+
+    public static final String SQL_MODELO="" +
+            "SELECT\r\n" + 
+            "OMS_DOCUMENT.ID,\r\n" + 
+            "OMS_DOCUMENT.NAME nro_documento,\r\n" + 
+            "SPROBJECTS.OBJECTID,\r\n" + 
+            "DECODE(OMS_DOCUMENT.TYPE_ID,3,'FORZADOMT',4,'PROGRAMADOMT',5,'FORZADOAT',6,'PROGRAMADOAT') ORIGEN,\r\n" + 
+            "OMS_AFFECT_RESTORE_OPERATION.TIME AS FECHA_DOCUMENTO,\r\n" + 
+            "(SELECT SUBSTR(TRIM(linkvalue),0,INSTR(TRIM(linkvalue),'-')-1) FROM NEXUS_GIS.SPRLINKS WHERE objectid =OMS_DOCUMENT.ID AND linkid=1198) CT, \r\n" + 
+            "OMS_AFFECTED_ELEMENT.COUNT_PROPERTIES CANT_AFECTACIONES\r\n" + 
+            ",OMS_AFFECT_RESTORE_OPERATION.IS_RESTORE IS_RESTORE\r\n" +
+            ",OMS_AFFECTED_ELEMENT.IS_AFFECTED IS_AFFECTED\r\n" +
+            ",OMS_DOCUMENT.CREATION_TIME\r\n" +
+            "FROM NEXUS_GIS.OMS_DOCUMENT,\r\n" + 
+            "NEXUS_GIS.OMS_DOCUMENT_TYPE,\r\n" + 
+            "NEXUS_GIS.OMS_DOCUMENT_STATE,\r\n" +
+            "NEXUS_GIS.SPROBJECTS,\r\n" + 
+            "NEXUS_GIS.OMS_OPERATION,\r\n" + 
+            "NEXUS_GIS.SPRGOPERATIONS,\r\n" +
+            "NEXUS_GIS.OMS_AFFECT_RESTORE_OPERATION,\r\n" + 
+            "NEXUS_GIS.OMS_AFFECTED_ELEMENT\r\n" + 
+            "WHERE OMS_OPERATION.DOCUMENT_ID IN ( %d )\r\n" + 
+            "AND OMS_OPERATION.DOCUMENT_ID = OMS_DOCUMENT.ID\r\n" + 
+            "AND OMS_DOCUMENT_TYPE.ID = OMS_DOCUMENT.TYPE_ID\r\n" + 
+            "AND OMS_DOCUMENT_STATE.ID = OMS_DOCUMENT.LAST_STATE_ID\r\n" + 
+            "AND OMS_OPERATION.OPERATION_MODEL_ID = SPRGOPERATIONS.OPERATIONID\r\n" + 
+            "AND SPROBJECTS.OBJECTID = OMS_AFFECTED_ELEMENT.ELEMENT_ID\r\n" + 
+            "AND OMS_AFFECT_RESTORE_OPERATION.IS_RESTORE = 0\r\n" + 
+            "AND SPRGOPERATIONS.LOGIDTO = 0\r\n" + 
+            "AND OMS_OPERATION.ID = OMS_AFFECT_RESTORE_OPERATION.OPERATION_ID\r\n" + 
+            "AND OMS_AFFECT_RESTORE_OPERATION.ID = OMS_AFFECTED_ELEMENT.AFFECT_ID\r\n" + 
+            "AND OMS_DOCUMENT.TYPE_ID IN (3,4,5,6)\r\n" + 
+            "AND OMS_DOCUMENT.LAST_STATE_ID>1\r\n" + 
+            "AND OMS_DOCUMENT.LAST_STATE_ID<5\r\n"
+            ;
+
+    public static final String SQL_INICIO="";
+
+    public static final String SQL_RESTAURACION="" +
+            "SELECT AROR.TIME TIME \r\n" +
+            "FROM \r\n" +
+            "  OMS_AFFECT_RESTORE_OPERATION ARO\r\n" +
+            "  ,OMS_AFFECTED_ELEMENT AE\r\n" +
+            "  ,OMS_AFFECT_RESTORE_OPERATION AROR\r\n" +
+            "WHERE \r\n" +
+            "  ARO.ID=AE.AFFECT_ID\r\n" +
+            "  AND AE.RESTORE_ID=AROR.ID\r\n" +
+            "  AND ARO.DOCUMENT_ID=%d\r\n" +
+            "  AND AE.ELEMENT_ID=%d";
+
+    public static final String SQL_CT_BY_NEXTID="SELECT OBJECTID, NEXTID FROM NEXUS_GIS.SPROBJECTS WHERE SPRID=1293 AND OBJECTID = %d";
+
+    public static final String SQL_CT_BY_LINKID_1198="SELECT TRIM(LINKVALUE) CT FROM NEXUS_GIS.SPRLINKS WHERE OBJECTID = %d AND LINKID=1198";
+
+    public static final String SQL_CT_BY_LINKID_1018="SELECT TRIM(LINKVALUE) CT FROM NEXUS_GIS.SPRLINKS WHERE OBJECTID = %d AND LINKID=1018";
+
+}
