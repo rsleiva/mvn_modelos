@@ -14,7 +14,7 @@ public class Propiedades {
 		properties = new Properties();
 		try (FileInputStream input = new FileInputStream("./config.properties")) {
 			properties.load(input);
-            System.out.println("Abriendo propiedades...");
+            // System.out.println("Abriendo propiedades...");
 		} catch (IOException e) {
 			e.printStackTrace();
             System.out.println("Error al obtener las propiedades! "+e);
@@ -65,23 +65,28 @@ public class Propiedades {
     }
 	public DatosDTO getDatos(){
 		DatosDTO datos=new DatosDTO();
-		System.out.println("Obteniendo Propiedades...");
-		datos.setDriverClass(getdriverClass());
-		datos.setCadena(getCadena());
-		datos.setUser(getUser());
-		datos.setPass(getPass());
-		datos.setHost(getHost());
-		datos.setFrom(getFrom());
-		datos.setTo(getTo());
-		datos.setCC(getCC());
-		datos.setCO(getCO());
-		datos.setSubject(getSubject());
-		datos.setBody(getBody());
-		datos.setRuta_excel(getExcel());
-        datos.setNotepad(getNotepad());
-        datos.setDoc(getDoc());
+        try {
+            // System.out.println("Obteniendo Propiedades...");
+            datos.setDriverClass(getdriverClass());
+            datos.setCadena(getCadena());
+            datos.setUser(getUser());
+            datos.setPass(getPass());
+            datos.setHost(getHost());
+            datos.setFrom(getFrom());
+            datos.setTo(getTo());
+            datos.setCC(getCC());
+            datos.setCO(getCO());
+            datos.setSubject(getSubject());
+            datos.setBody(getBody());
+            datos.setRuta_excel(getExcel());
+            datos.setNotepad(getNotepad());
+            datos.setDoc(getDoc());
 
-        System.out.println("Propiedades obtenidas!");
+            // System.out.println("Propiedades obtenidas!");            
+        } catch (Exception e) {
+            System.out.println("Error al obtener propiedades!"); 
+            datos=null;
+        }
 
         return datos;
 	}    

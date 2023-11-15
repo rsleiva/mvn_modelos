@@ -24,7 +24,6 @@ class App {
             }
         };
         // Programar la tarea para que se ejecute cada 5 minutos
-        //timer.schedule(tarea, 0, 5 * 60 * 1000);
         timer.schedule(tarea,0, getSchedule());
 	}
 

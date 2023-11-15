@@ -31,7 +31,7 @@ public class Conectar {
 
 	public void Oracle_connect() throws Exception {
 		try {
-			System.out.println("Generando la conexion a Oracle...");
+			// System.out.println("Generando la conexion a Oracle...");
 			Class.forName(driverClass).newInstance();
 		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
 			System.out.println("Error al cargar el driver: oracle.jdbc.driver.OracleDriver -Error: " + e);
@@ -43,7 +43,7 @@ public class Conectar {
 					cnn,             //jdbc:oracle:thin:@ltronxgisbdpr03.pro.edenor:1528:GISPR03
 					usu,             //SVC_ORA_GIS
 					pss);            //jv506uzy
-			System.out.println("Conexion establecida!");
+			// System.out.println("Conexion establecida!");
 		} catch (SQLException var3) {
 				switch (var3.getErrorCode()) {
 				case 1017:
@@ -69,7 +69,7 @@ public class Conectar {
 		ResultSet rs;
 		List<DocumentosDTO> lista= new ArrayList<>();
 		try {
-			System.out.println("Obteniendo Nuevos Documentos...");
+			// System.out.println("Obteniendo Nuevos Documentos...");
 			Statement sentencia = con.createStatement();
 			rs = sentencia.executeQuery(sql);
 			
@@ -84,8 +84,8 @@ public class Conectar {
 			}
 			if (lista.isEmpty()) {
 				System.out.println("No hay documentos");
-			} else {
-				System.out.println("Se Obtuvieron documentos!");
+			// } else {
+				// System.out.println("Se Obtuvieron documentos!");
 			}
 			rs.close();
 		} catch (Exception e) {

@@ -35,6 +35,7 @@ public class ModeloX implements IModelo {
     public void obtieneDocumentosNuevos() {
         List<AfectacionesDTO> afe = new ArrayList<AfectacionesDTO>();
         List<String> notepad = new ArrayList<String>();
+        Integer insertados=0;
         try {
             /*
              * Obtiene la lista de los documentos que aparecieron con cts
@@ -54,19 +55,13 @@ public class ModeloX implements IModelo {
              * Envio cada Documento para guardar en el archivo notepad, dependiendo del modelo
              */
             if (!doc.isEmpty()) {
-                System.out.println(""
-                    +"\n##########################################################################################################################"
-                    +"\nCAMPAÑA: "+fecha
-                    +"\n##########################################################################################################################"
+                System.out.print(""
+                    // +"\n##########################################################################################################################"
+                    +"\nCAMPAÑA: "+fecha+"\t>>\t"
+                    // +"\n##########################################################################################################################"
                     );
                 for (DocumentosDTO d : doc) {
                     if (!existeDoc(d.getName())) {
-            
-                        // System.out.println(
-                        //     "--------------------------------------------------------------------------------------------------------------------------"
-                        //     + "\n\tDOCUMENTO: " + d.getName()
-                        //     // + "\n\t-------------------------------------"
-                        //    );
                         /*
                         * Se obtiene datos del Modelo, segun corresponda
                         */
@@ -116,12 +111,13 @@ public class ModeloX implements IModelo {
                                     a.getCant_afectaciones()
                                 )
                             );
+                            insertados+=1;
                         }
                     }
                 }
                 // Exporta al notepad
                 exportaTXT(notepad);
-                System.out.println("\n\n");
+                System.out.print("CTs PROCESADOS: "+insertados+"\t>>\t");
             }
             // Cerrar la conexion
             cnn.cierraConexion();
